@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Waverra — swim school demo</title>
+<style>
+  :root{
+    --navy:#12294D; --teal:#1CA9C4; --purple:#7E5BD0; --coral:#F0673F; --yellow:#F7B32B;
+    --page:#E7EEF1; --card:#FFFFFF; --panel:#F4F7F9; --line:#E1E8EC;
+    --text:#16283F; --mute:#5E6E7E;
+    --dangerbg:#FCEBE6; --danger:#C24A2B;
+    --successbg:#E1F3EF; --success:#0E7C63;
+    --warnbg:#FDF1DD; --warn:#A76F12; --accentbg:#E2F2F6;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;height:100%;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--page);color:var(--text);display:flex;align-items:center;justify-content:center;min-height:100%;}
+  #phone{width:100%;max-width:420px;height:100vh;max-height:860px;background:var(--card);
+    display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(18,41,77,.28);}
+  @media(min-width:460px){#phone{border-radius:28px;height:820px;}}
+  header{padding:15px 18px 12px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:11px;flex-shrink:0;}
+  .logo{width:36px;height:36px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .logo svg{width:22px;height:22px;}
+  .brand{font-size:16px;font-weight:700;color:var(--navy);letter-spacing:.2px;}
+  .sub{font-size:12px;color:var(--mute);margin-top:1px;}
+  main{flex:1;overflow-y:auto;padding:16px 16px 20px;-webkit-overflow-scrolling:touch;}
+  nav{display:flex;border-top:1px solid var(--line);flex-shrink:0;background:var(--card);}
+  nav button{flex:1;border:none;background:none;padding:9px 0 calc(9px + env(safe-area-inset-bottom));
+    display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;font-size:11px;color:var(--mute);font-family:inherit;}
+  nav button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;}
+  nav button.on{color:var(--teal);font-weight:600;}
+  .hero{background:var(--dangerbg);border-radius:14px;padding:15px 17px;margin-bottom:14px;}
+  .hero .lab{font-size:12px;color:var(--danger);}
+  .hero .big{font-size:30px;font-weight:700;color:var(--danger);line-height:1.1;margin:2px 0;}
+  .metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
+  .metric{background:var(--panel);border-radius:10px;padding:11px 13px;}
+  .metric .lab{font-size:12px;color:var(--mute);}
+  .metric .val{font-size:21px;font-weight:700;margin-top:1px;color:var(--navy);}
+  .sect{font-size:13px;color:var(--mute);margin:0 0 4px;}
+  .row{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--line);}
+  .av{width:34px;height:34px;border-radius:50%;background:var(--accentbg);color:var(--teal);
+    display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+  .grow{flex:1;min-width:0;}
+  .nm{font-size:14px;}
+  .tiny{font-size:12px;color:var(--mute);}
+  .owe{font-size:14px;font-weight:700;color:var(--danger);}
+  .clshead{background:var(--panel);border-radius:12px;padding:12px 14px;margin-bottom:14px;}
+  .clshead .t{font-size:14px;font-weight:700;color:var(--navy);}
+  .cap{font-size:11px;color:var(--success);background:var(--successbg);padding:3px 9px;border-radius:20px;}
+  .flag{font-size:11px;color:var(--danger);background:var(--dangerbg);padding:2px 8px;border-radius:20px;margin-left:6px;white-space:nowrap;}
+  .noflag{font-size:11px;color:var(--mute);}
+  .seg{display:flex;border-radius:9px;overflow:hidden;margin-top:8px;}
+  .seg button{flex:1;border:1px solid var(--line);background:none;font-size:11px;padding:8px 0;cursor:pointer;color:var(--mute);font-family:inherit;}
+  .seg button.on-p{background:var(--successbg);color:var(--success);border-color:var(--success);font-weight:600;}
+  .seg button.on-n{background:var(--dangerbg);color:var(--danger);border-color:var(--danger);font-weight:600;}
+  .seg button.on-c{background:var(--warnbg);color:var(--warn);border-color:var(--warn);font-weight:600;}
+  .lvl{font-size:12px;color:var(--teal);margin:3px 0 6px;font-weight:600;}
+  .pill{font-size:11px;padding:4px 11px;border-radius:20px;border:1px solid var(--line);cursor:pointer;background:none;color:var(--mute);font-family:inherit;}
+  .pill.paid{background:var(--successbg);color:var(--success);border-color:var(--success);font-weight:600;}
+  .note{font-size:11px;color:var(--mute);margin-top:3px;}
+  .kept{color:var(--success);} .cred{color:var(--warn);}
+  .intro{font-size:12px;color:var(--mute);margin-bottom:10px;}
+</style>
+</head>
+<body>
+<div id="phone">
+  <header>
+    <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round"><path d="M2 13c2.2 0 2.2 2 4.4 2s2.2-2 4.4-2 2.2 2 4.4 2 2.2-2 4.4-2"/><path d="M2 17c2.2 0 2.2 2 4.4 2s2.2-2 4.4-2 2.2 2 4.4 2 2.2-2 4.4-2"/><path d="M2 9c2.2 0 2.2 2 4.4 2s2.2-2 4.4-2 2.2 2 4.4 2 2.2-2 4.4-2"/></svg></div>
+    <div style="flex:1"><div class="brand">Waverra</div><div class="sub" id="sub">Hougang · July</div></div>
+  </header>
+  <main id="app"></main>
+  <nav id="nav">
+    <button data-scr="home" class="on"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Home</button>
+    <button data-scr="today"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 12l3 3 5-6"/></svg>Today</button>
+    <button data-scr="students"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-5 6-5s6 1.7 6 5"/><circle cx="17" cy="9" r="2.3"/><path d="M15.5 15c3 .2 5.5 1.8 5.5 5"/></svg>Students</button>
+    <button data-scr="billing"><svg viewBox="0 0 24 24"><path d="M6 3v18l2-1.4L10 21l2-1.4L14 21l2-1.4L18 21V3l-2 1.4L14 3l-2 1.4L10 3 8 4.4 6 3z"/><path d="M9 8h6M9 12h6"/></svg>Billing</button>
+  </nav>
+</div>
+<script>
+(function(){
+  var RATE=30;
+  var students=[
+    {id:1,name:"Zoe Tan",age:6,med:"Asthma",level:"Beginner",hist:["present","present","cancelled"],today:null,paid:false},
+    {id:2,name:"Ethan Lim",age:8,med:null,level:"SwimSafer Stage 3",hist:["present","noshow","present"],today:null,paid:false},
+    {id:3,name:"Sophie Ng",age:5,med:null,level:"Beginner",hist:["present","present","present"],today:null,paid:true},
+    {id:4,name:"Marcus Chua",age:9,med:null,level:"SwimSafer Stage 4",hist:["present","present","present"],today:null,paid:true},
+    {id:5,name:"Aisha Rahman",age:7,med:null,level:"SwimSafer Stage 5",hist:["cancelled","present","present"],today:null,paid:false}
+  ];
+  var scr="home";
+  var app=document.getElementById("app"), sub=document.getElementById("sub");
+  function ini(n){return n.split(" ").map(function(w){return w[0];}).join("").slice(0,2).toUpperCase();}
+  function charged(s){return s.hist.concat([s.today||"present"]).filter(function(x){return x==="present"||x==="noshow";}).length;}
+  function inv(s){return charged(s)*RATE;}
+  function nsAll(){return students.reduce(function(a,s){return a+s.hist.concat([s.today]).filter(function(x){return x==="noshow";}).length;},0);}
+  function m(n){return "$"+Math.round(n).toLocaleString();}
+
+  function render(){
+    document.querySelectorAll("#nav button").forEach(function(b){b.classList.toggle("on",b.dataset.scr===scr);});
+    ({home:home,today:today,students:studentsV,billing:billing})[scr]();
+    app.scrollTop=0;
+  }
+  function home(){
+    sub.textContent="Hougang · July";
+    var out=students.filter(function(s){return !s.paid;}).reduce(function(a,s){return a+inv(s);},0);
+    var col=students.filter(function(s){return s.paid;}).reduce(function(a,s){return a+inv(s);},0);
+    var n=students.filter(function(s){return !s.paid;}).length;
+    var rows=students.filter(function(s){return !s.paid;}).map(function(s){
+      return '<div class="row"><div class="av">'+ini(s.name)+'</div><div class="grow"><div class="nm">'+s.name+'</div><div class="tiny">July lessons</div></div><div class="owe">'+m(inv(s))+'</div></div>';
+    }).join("");
+    app.innerHTML=
+      '<div class="hero"><div class="lab">You’re owed</div><div class="big">'+m(out)+'</div><div class="lab">from '+n+' families</div></div>'+
+      '<div class="metrics"><div class="metric"><div class="lab">Collected</div><div class="val">'+m(col)+'</div></div>'+
+      '<div class="metric"><div class="lab">No-shows recovered</div><div class="val">'+m(nsAll()*RATE)+'</div></div></div>'+
+      '<div class="sect">Who still owes</div>'+(rows||'<div class="tiny" style="padding:12px 0">Everyone’s paid up.</div>');
+  }
+  function today(){
+    sub.textContent="Sat 2:30pm · Little Pirates";
+    var head='<div class="clshead"><div style="display:flex;justify-content:space-between;align-items:center"><div class="t">Little Pirates · Sat 2:30pm</div><div class="cap">'+students.length+' / 6 · SG cap 10</div></div><div class="tiny" style="margin-top:2px">Coach Ash · tap to mark attendance</div></div>';
+    var rows=students.map(function(s){
+      var flag=s.med?'<span class="flag">▲ '+s.med+'</span>':'';
+      var seg=[["present","Present","on-p"],["noshow","No-show","on-n"],["cancelled","Cancelled","on-c"]].map(function(o){
+        return '<button data-sid="'+s.id+'" data-st="'+o[0]+'" class="'+(s.today===o[0]?o[2]:'')+'">'+o[1]+'</button>';
+      }).join("");
+      return '<div style="padding:10px 0;border-bottom:1px solid var(--line)"><div style="display:flex;align-items:center"><div class="nm">'+s.name+'</div>'+flag+'</div><div class="seg">'+seg+'</div></div>';
+    }).join("");
+    app.innerHTML=head+rows;
+    app.querySelectorAll(".seg button").forEach(function(b){
+      b.onclick=function(){var s=students.find(function(x){return x.id==b.dataset.sid;});s.today=b.dataset.st;render();};
+    });
+  }
+  function studentsV(){
+    sub.textContent="5 students";
+    app.innerHTML=students.map(function(s){
+      var flag=s.med?'<span class="flag">▲ '+s.med+'</span>':'<span class="noflag">No health notes</span>';
+      return '<div class="row" style="align-items:flex-start"><div class="av">'+ini(s.name)+'</div><div class="grow"><div style="display:flex;justify-content:space-between"><div class="nm" style="font-weight:600">'+s.name+'</div><div class="tiny">Age '+s.age+'</div></div><div class="lvl">◆ '+s.level+'</div>'+flag+'</div></div>';
+    }).join("");
+  }
+  function billing(){
+    sub.textContent="July invoices";
+    var rows=students.map(function(s){
+      var full=4*RATE,i=inv(s),credit=full-i,ns=s.hist.concat([s.today]).filter(function(x){return x==="noshow";}).length;
+      var note=credit>0?'<span class="cred">'+m(credit)+' credited</span>':(ns>0?'<span class="kept">'+m(ns*RATE)+' no-show kept</span>':'Full attendance');
+      return '<div style="padding:11px 0;border-bottom:1px solid var(--line)"><div style="display:flex;justify-content:space-between;align-items:center"><div class="nm">'+s.name+'</div><div style="display:flex;align-items:center;gap:10px"><div class="nm" style="font-weight:700">'+m(i)+'</div><button data-pid="'+s.id+'" class="pill'+(s.paid?' paid':'')+'">'+(s.paid?'Paid':'Mark paid')+'</button></div></div><div class="note">4 sessions × $'+RATE+' · '+note+'</div></div>';
+    }).join("");
+    app.innerHTML='<div class="intro">Auto-generated from attendance — no-shows charged, advance cancellations credited.</div>'+rows;
+    app.querySelectorAll(".pill").forEach(function(b){
+      b.onclick=function(){var s=students.find(function(x){return x.id==b.dataset.pid;});s.paid=!s.paid;render();};
+    });
+  }
+  document.querySelectorAll("#nav button").forEach(function(b){b.onclick=function(){scr=b.dataset.scr;render();};});
+  render();
+})();
+</script>
+</body>
+</html>

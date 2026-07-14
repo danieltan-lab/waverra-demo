@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Waverra — school OS</title>
+<style>
+  :root{
+    --navy:#12294D; --navy2:#1B3A63; --teal:#1CA9C4; --purple:#7E5BD0; --coral:#F0673F; --yellow:#F7B32B;
+    --page:#EEF3F6; --card:#FFFFFF; --panel:#F4F7F9; --line:#E4EBEF;
+    --text:#16283F; --mute:#64757F;
+    --dangerbg:#FCEBE6; --danger:#C24A2B; --successbg:#E1F3EF; --success:#0E7C63; --warnbg:#FDF1DD; --warn:#A76F12; --tealbg:#E2F2F6;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--page);color:var(--text);}
+  .app{display:flex;min-height:100vh;}
+  /* sidebar */
+  aside{width:212px;background:var(--navy);color:#fff;flex-shrink:0;display:flex;flex-direction:column;padding:16px 0;}
+  .logo{display:flex;align-items:center;gap:10px;padding:4px 18px 18px;}
+  .logo .mark{width:34px;height:34px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;}
+  .logo .mark svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:1.9;stroke-linecap:round;}
+  .logo .nm{font-size:15px;font-weight:700;letter-spacing:.3px;}
+  .logo .tg{font-size:10px;color:#9Fc7d6;letter-spacing:.5px;}
+  nav{display:flex;flex-direction:column;gap:2px;padding:8px 10px;flex:1;}
+  .nav{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;color:#C9D6E4;font-size:14px;cursor:pointer;border:none;background:none;font-family:inherit;text-align:left;width:100%;}
+  .nav svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;}
+  .nav:hover{background:var(--navy2);color:#fff;}
+  .nav.on{background:var(--teal);color:#fff;font-weight:600;}
+  .owner{display:flex;align-items:center;gap:10px;padding:12px 16px;border-top:1px solid var(--navy2);margin-top:6px;}
+  .owner .av{width:32px;height:32px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+  .owner .nm{font-size:13px;font-weight:600;} .owner .rl{font-size:11px;color:#9Fc7d6;}
+  /* main */
+  main{flex:1;min-width:0;display:flex;flex-direction:column;}
+  .top{display:flex;align-items:center;justify-content:space-between;padding:16px 26px;border-bottom:1px solid var(--line);background:var(--card);}
+  .top h1{font-size:20px;margin:0;font-weight:700;}
+  .top .loc{font-size:12px;color:var(--mute);margin-top:2px;}
+  .top .right{display:flex;align-items:center;gap:10px;}
+  .chip{font-size:12px;color:var(--mute);background:var(--panel);border:1px solid var(--line);padding:7px 12px;border-radius:8px;}
+  .content{padding:22px 26px;overflow-y:auto;}
+  /* kpis */
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px;}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;}
+  .kpi .lab{font-size:12px;color:var(--mute);display:flex;align-items:center;gap:6px;}
+  .kpi .val{font-size:26px;font-weight:700;margin-top:5px;color:var(--navy);}
+  .kpi .val.warn{color:var(--danger);}
+  .kpi .sub{font-size:11px;color:var(--mute);margin-top:2px;}
+  /* grid cols */
+  .cols{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;}
+  .cardbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;}
+  .cardbox h3{font-size:14px;margin:0 0 12px;font-weight:700;}
+  .cardbox h3 .r{float:right;font-size:12px;color:var(--teal);font-weight:600;cursor:pointer;}
+  .lrow{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--line);}
+  .lrow:last-child{border-bottom:none;}
+  .av2{width:30px;height:30px;border-radius:50%;background:var(--tealbg);color:var(--teal);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+  .grow{flex:1;min-width:0;}
+  .nm{font-size:13px;} .tiny{font-size:12px;color:var(--mute);}
+  .owe{font-size:13px;font-weight:700;color:var(--danger);white-space:nowrap;}
+  .badge{font-size:11px;padding:2px 8px;border-radius:20px;white-space:nowrap;}
+  .b-teal{background:var(--tealbg);color:var(--teal);} .b-full{background:var(--warnbg);color:var(--warn);}
+  .b-ok{background:var(--successbg);color:var(--success);} .b-red{background:var(--dangerbg);color:var(--danger);}
+  .flag{font-size:11px;color:var(--danger);background:var(--dangerbg);padding:2px 8px;border-radius:20px;margin-left:6px;}
+  /* schedule grid */
+  .week{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;}
+  .day{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;min-height:140px;}
+  .day .dh{font-size:12px;font-weight:700;color:var(--navy);margin-bottom:8px;text-align:center;padding-bottom:6px;border-bottom:1px solid var(--line);}
+  .cls{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 8px;margin-bottom:7px;}
+  .cls .t{font-size:11px;font-weight:700;color:var(--navy);}
+  .cls .m{font-size:10px;color:var(--mute);margin:2px 0;}
+  .cls .f{font-size:10px;font-weight:600;}
+  .cls .f.ok{color:var(--teal);} .cls .f.full{color:var(--warn);}
+  /* table */
+  table{width:100%;border-collapse:collapse;}
+  th{text-align:left;font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.4px;padding:9px 10px;border-bottom:1px solid var(--line);font-weight:600;}
+  td{font-size:13px;padding:11px 10px;border-bottom:1px solid var(--line);}
+  .coachcards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+  .cc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;}
+  .cc .hd{display:flex;align-items:center;gap:11px;margin-bottom:12px;}
+  .cc .av3{width:40px;height:40px;border-radius:50%;background:var(--purple);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;}
+  .cc .st{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .cc .s{background:var(--panel);border-radius:8px;padding:8px 10px;}
+  .cc .s .l{font-size:11px;color:var(--mute);} .cc .s .v{font-size:16px;font-weight:700;color:var(--navy);}
+  .hide{display:none;}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="logo">
+      <div class="mark"><svg viewBox="0 0 24 24"><path d="M2 9c2.2 0 2.2 2 4.4 2s2.2-2 4.4-2 2.2 2 4.4 2 2.2-2 4.4-2"/><path d="M2 13c2.2 0 2.2 2 4.4 2s2.2-2 4.4-2 2.2 2 4.4 2 2.2-2 4.4-2"/><path d="M2 17c2.2 0 2.2 2 4.4 2s2.2-2 4.4-2 2.2 2 4.4 2 2.2-2 4.4-2"/></svg></div>
+      <div><div class="nm">Waverra</div><div class="tg">SWIM ACADEMY</div></div>
+    </div>
+    <nav id="nav">
+      <button class="nav on" data-v="dash"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>Dashboard</button>
+      <button class="nav" data-v="sched"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Schedule</button>
+      <button class="nav" data-v="team"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-5 6-5s6 1.7 6 5"/><circle cx="17" cy="9" r="2.3"/><path d="M15.5 15c3 .2 5.5 1.8 5.5 5"/></svg>Coaches</button>
+      <button class="nav" data-v="students"><svg viewBox="0 0 24 24"><path d="M4 19.5V6a2 2 0 0 1 2-2h12v16H6a2 2 0 0 1-2-2z"/><path d="M8 8h8M8 12h6"/></svg>Students</button>
+      <button class="nav" data-v="billing"><svg viewBox="0 0 24 24"><path d="M6 3v18l2-1.4L10 21l2-1.4L14 21l2-1.4L18 21V3l-2 1.4L14 3l-2 1.4L10 3 8 4.4 6 3z"/><path d="M9 8h6M9 12h6"/></svg>Billing</button>
+    </nav>
+    <div class="owner"><div class="av">AL</div><div><div class="nm">Ash Lim</div><div class="rl">Owner · Head coach</div></div></div>
+  </aside>
+  <main>
+    <div class="top">
+      <div><h1 id="ptitle">Dashboard</h1><div class="loc">Waverra Swim Academy · Hougang Swimming Complex</div></div>
+      <div class="right"><span class="chip">July 2026</span><span class="chip">4 coaches · 62 students</span></div>
+    </div>
+    <div class="content" id="content"></div>
+  </main>
+</div>
+<script>
+(function(){
+  var coaches=[
+    {n:"Ash Lim",r:"Owner · Head coach",cls:4,stu:22,coll:3120,out:180,att:96},
+    {n:"Mei Tan",r:"Coach",cls:3,stu:16,coll:1980,out:390,att:93},
+    {n:"Priya Nair",r:"Coach",cls:3,stu:15,coll:1860,out:450,att:98},
+    {n:"Hui Ling",r:"Coach",cls:2,stu:9,coll:1140,out:240,att:91}
+  ];
+  var sched={
+    Mon:[["5:00pm","SwimSafer 2","Mei",6,8]],
+    Tue:[["5:00pm","SwimSafer 3","Priya",7,8],["6:00pm","SwimSafer 4","Ash",8,10]],
+    Wed:[["5:00pm","Beginners","Hui",5,6],["6:00pm","Little Pirates","Mei",6,6]],
+    Thu:[["5:00pm","SwimSafer 3","Priya",6,8]],
+    Fri:[["5:00pm","SwimSafer 5","Ash",7,10]],
+    Sat:[["9:00am","SwimSafer 4","Ash",9,10],["10:00am","Beginners","Hui",4,6],["2:30pm","Little Pirates","Mei",5,6]],
+    Sun:[["9:00am","SwimSafer 3","Priya",8,8],["10:00am","SwimSafer 5","Ash",6,10]]
+  };
+  var owing=[
+    {n:"Zoe Tan",amt:90,d:12,coach:"Ash",flag:"Asthma"},
+    {n:"Ethan Lim",amt:120,d:9,coach:"Priya"},
+    {n:"Aisha Rahman",amt:90,d:6,coach:"Ash"},
+    {n:"Kai Wong",amt:150,d:5,coach:"Mei"},
+    {n:"Leia Fong",amt:120,d:4,coach:"Priya"}
+  ];
+  var roster=[
+    {n:"Zoe Tan",age:6,lvl:"Beginner",coach:"Ash",paid:false,flag:"Asthma"},
+    {n:"Ethan Lim",age:8,lvl:"SwimSafer Stage 3",coach:"Priya",paid:false},
+    {n:"Sophie Ng",age:5,lvl:"Beginner",coach:"Hui",paid:true},
+    {n:"Marcus Chua",age:9,lvl:"SwimSafer Stage 4",coach:"Ash",paid:true},
+    {n:"Aisha Rahman",age:7,lvl:"SwimSafer Stage 5",coach:"Ash",paid:false},
+    {n:"Kai Wong",age:6,lvl:"SwimSafer Stage 2",coach:"Mei",paid:false},
+    {n:"Leia Fong",age:8,lvl:"SwimSafer Stage 3",coach:"Priya",paid:false},
+    {n:"Noah Tan",age:10,lvl:"SwimSafer Stage 5",coach:"Mei",paid:true}
+  ];
+  var ini=function(n){return n.split(" ").map(function(w){return w[0];}).join("").slice(0,2).toUpperCase();};
+  var $=function(id){return document.getElementById(id);};
+  var content=$("content"), ptitle=$("ptitle");
+  var titles={dash:"Dashboard",sched:"Weekly schedule",team:"Coaches",students:"Students",billing:"Billing"};
+
+  function dash(){
+    var totalOut=owing.reduce(function(a,o){return a+o.amt;},0)+270;
+    var owe=owing.map(function(o){
+      return '<div class="lrow"><div class="av2">'+ini(o.n)+'</div><div class="grow"><div class="nm">'+o.n+(o.flag?'<span class="flag">▲ '+o.flag+'</span>':'')+'</div><div class="tiny">'+o.coach+'’s class · '+o.d+' days overdue</div></div><div class="owe">$'+o.amt+'</div></div>';
+    }).join("");
+    var cteam=coaches.map(function(c){
+      return '<div class="lrow"><div class="av2" style="background:#EEE8FA;color:#7E5BD0">'+ini(c.n)+'</div><div class="grow"><div class="nm">'+c.n+'</div><div class="tiny">'+c.cls+' classes · '+c.stu+' students</div></div><span class="badge '+(c.att>=95?'b-ok':'b-teal')+'">'+c.att+'% attend</span></div>';
+    }).join("");
+    var full=[]; for(var d in sched){sched[d].forEach(function(c){if(c[3]>=c[4])full.push(c[1]+" ("+d+")");});}
+    content.innerHTML=
+      '<div class="kpis">'+
+        kpi("Active students","62","across 4 coaches")+
+        kpi("Classes this week","12","6 near capacity")+
+        kpi("Collected · July","$8,100","94% of billed")+
+        kpi("Outstanding","$1,260",owing.length+"+ families",true)+
+        kpi("No-shows recovered","$240","kept, not written off")+
+      '</div>'+
+      '<div class="cols">'+
+        '<div class="cardbox"><h3>Needs your attention <span class="r" onclick="_go(\'billing\')">View billing</span></h3>'+owe+
+          '<div class="lrow"><div class="av2 " style="background:#FDF1DD;color:#A76F12">!</div><div class="grow"><div class="nm">'+full.length+' classes at full capacity</div><div class="tiny">'+full.slice(0,3).join(", ")+'</div></div><span class="badge b-full">Add a class?</span></div>'+
+        '</div>'+
+        '<div class="cardbox"><h3>Coaches at a glance <span class="r" onclick="_go(\'team\')">Manage team</span></h3>'+cteam+'</div>'+
+      '</div>';
+  }
+  function kpi(l,v,s,warn){return '<div class="kpi"><div class="lab">'+l+'</div><div class="val'+(warn?' warn':'')+'">'+v+'</div><div class="sub">'+s+'</div></div>';}
+
+  function schedV(){
+    var days=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+    var cols=days.map(function(d){
+      var cls=(sched[d]||[]).map(function(c){
+        var full=c[3]>=c[4];
+        return '<div class="cls"><div class="t">'+c[1]+'</div><div class="m">'+c[0]+' · '+c[2]+'</div><div class="f '+(full?'full':'ok')+'">'+c[3]+'/'+c[4]+(full?' · full':'')+'</div></div>';
+      }).join("")||'<div class="tiny" style="text-align:center;padding:8px">—</div>';
+      return '<div class="day"><div class="dh">'+d+'</div>'+cls+'</div>';
+    }).join("");
+    content.innerHTML='<div class="tiny" style="margin-bottom:12px">12 classes this week across 4 coaches · capacity capped at the SG 1:10 limit.</div><div class="week">'+cols+'</div>';
+  }
+  function teamV(){
+    content.innerHTML='<div class="coachcards">'+coaches.map(function(c){
+      return '<div class="cc"><div class="hd"><div class="av3">'+ini(c.n)+'</div><div><div class="nm" style="font-size:15px;font-weight:700">'+c.n+'</div><div class="tiny">'+c.r+'</div></div></div>'+
+        '<div class="st"><div class="s"><div class="l">Classes</div><div class="v">'+c.cls+'</div></div>'+
+        '<div class="s"><div class="l">Students</div><div class="v">'+c.stu+'</div></div>'+
+        '<div class="s"><div class="l">Attendance</div><div class="v">'+c.att+'%</div></div></div>'+
+        '<div class="lrow" style="border:none;padding-top:12px"><div class="grow tiny">Collected in July</div><div class="nm" style="font-weight:700">$'+c.coll.toLocaleString()+'</div></div>'+
+        '<div class="lrow" style="border:none;padding:0"><div class="grow tiny">Outstanding</div><div class="owe">$'+c.out+'</div></div></div>';
+    }).join("")+'</div>';
+  }
+  function studentsV(){
+    content.innerHTML='<div class="cardbox" style="padding:6px 10px"><table><thead><tr><th>Student</th><th>Age</th><th>Level</th><th>Coach</th><th>July fees</th></tr></thead><tbody>'+
+      roster.map(function(r){
+        return '<tr><td><b style="font-weight:600">'+r.n+'</b>'+(r.flag?'<span class="flag">▲ '+r.flag+'</span>':'')+'</td><td>'+r.age+'</td><td><span class="badge b-teal">'+r.lvl+'</span></td><td>'+r.coach+'</td><td><span class="badge '+(r.paid?'b-ok':'b-red')+'">'+(r.paid?'Paid':'Owes')+'</span></td></tr>';
+      }).join("")+'</tbody></table></div>';
+  }
+  function billingV(){
+    var tc=coaches.reduce(function(a,c){return a+c.coll;},0), to=coaches.reduce(function(a,c){return a+c.out;},0);
+    content.innerHTML='<div class="kpis" style="grid-template-columns:repeat(3,1fr)">'+
+        kpi("Collected · July","$"+tc.toLocaleString(),"across all coaches")+
+        kpi("Outstanding","$"+(to+270).toLocaleString(),"9 families",true)+
+        kpi("No-shows recovered","$240","policy: no-shows charged")+
+      '</div>'+
+      '<div class="cardbox" style="padding:6px 10px"><table><thead><tr><th>Coach</th><th>Classes</th><th>Students</th><th>Collected</th><th>Outstanding</th></tr></thead><tbody>'+
+      coaches.map(function(c){return '<tr><td><b style="font-weight:600">'+c.n+'</b></td><td>'+c.cls+'</td><td>'+c.stu+'</td><td>$'+c.coll.toLocaleString()+'</td><td><span class="owe">$'+c.out+'</span></td></tr>';}).join("")+
+      '</tbody></table></div>';
+  }
+  var views={dash:dash,sched:schedV,team:teamV,students:studentsV,billing:billingV};
+  window._go=function(v){go(v);};
+  function go(v){
+    document.querySelectorAll(".nav").forEach(function(b){b.classList.toggle("on",b.dataset.v===v);});
+    ptitle.textContent=titles[v]; views[v](); content.scrollTop=0;
+  }
+  document.querySelectorAll(".nav").forEach(function(b){b.onclick=function(){go(b.dataset.v);};});
+  go("dash");
+})();
+</script>
+</body>
+</html>
