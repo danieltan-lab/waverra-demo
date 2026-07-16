@@ -81,6 +81,28 @@
   .cc .s{background:var(--panel);border-radius:8px;padding:8px 10px;}
   .cc .s .l{font-size:11px;color:var(--mute);} .cc .s .v{font-size:16px;font-weight:700;color:var(--navy);}
   .hide{display:none;}
+  /* mobile */
+  @media(max-width:720px){
+    .app{flex-direction:column;min-height:100dvh;}
+    aside{width:100%;flex-direction:row;flex-wrap:wrap;align-items:center;padding:9px 12px;gap:6px;}
+    .logo{padding:0 6px 0 2px;flex-shrink:0;}
+    .logo .mark{width:30px;height:30px;} .logo .tg{display:none;}
+    nav{flex-direction:row;flex-wrap:wrap;flex:1;min-width:0;padding:0;gap:6px;justify-content:flex-end;}
+    .nav{width:auto;padding:8px 11px;font-size:13px;}
+    .nav svg{width:16px;height:16px;}
+    .owner{display:none;}
+    .top{padding:13px 16px;flex-wrap:wrap;gap:6px;}
+    .top h1{font-size:18px;}
+    .content{padding:16px;}
+    .kpis{grid-template-columns:repeat(2,1fr)!important;gap:10px;}
+    .cols{grid-template-columns:1fr;}
+    .coachcards{grid-template-columns:1fr;}
+    .week{display:flex;overflow-x:auto;gap:10px;-webkit-overflow-scrolling:touch;padding-bottom:4px;}
+    .week .day{flex:0 0 auto;width:150px;}
+    .cardbox{overflow-x:auto;}
+    table{min-width:460px;}
+  }
+  @media(max-width:340px){ .kpis{grid-template-columns:1fr!important;} }
 </style>
 </head>
 <body>
